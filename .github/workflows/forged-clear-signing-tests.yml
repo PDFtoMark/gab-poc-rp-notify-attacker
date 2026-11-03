@@ -1,0 +1,22 @@
+# Attacker-controlled workflow. The name is chosen to match the workflow that
+# .github/workflows/notify-fork-pr.yml in the BASE repo watches via workflow_run.
+name: Clear Signing Tests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  forged:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Forge the artifact the privileged workflow trusts
+        run: |
+          echo '{"pr_number": 1, "needs_notification": true}' > pr-metadata.json
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: pr-metadata
+          path: pr-metadata.json
+          retention-days: 1
